@@ -112,13 +112,13 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     }
     httpsOnly: true
   }
-  // //basic auth
-  // resource scmBasicAuth 'basicPublishingCredentialsPolicies@2023-12-01' = {
-  //   name: 'scm'
-  //   properties: {
-  //     allow: true
-  //   }
-  // }
+  //basic auth
+  resource scmBasicAuth 'basicPublishingCredentialsPolicies@2023-12-01' = {
+    name: 'scm'
+    properties: {
+      allow: true
+    }
+  }
 }
 
 output functionAppName string = functionApp.name
