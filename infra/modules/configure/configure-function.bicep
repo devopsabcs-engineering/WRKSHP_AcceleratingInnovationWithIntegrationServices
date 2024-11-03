@@ -7,7 +7,7 @@ param cosmosAccountName string
 @description('The Service Bus Namespace Host Name')
 param sbHostName string
 
-param repositoryUrl string = 'https://github.com/fsaleemm/APIM-SB-ManagedIdentity.git'
+param repositoryUrl string = 'https://github.com/devopsabcs-engineering/WRKSHP_AcceleratingInnovationWithIntegrationServices.git'
 param branch string = 'main'
 
 resource functionAppInstance 'Microsoft.Web/sites@2021-03-01' existing = {
