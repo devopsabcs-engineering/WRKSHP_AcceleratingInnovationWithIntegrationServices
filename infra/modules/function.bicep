@@ -105,6 +105,11 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: functionWorkerRuntime
         }
+        // Deploy from Visual Studio 2022
+        // {
+        //   name: 'WEBSITE_RUN_FROM_PACKAGE'
+        //   value: '1'
+        // }
       ]
       ftpsState: 'FtpsOnly'
       minTlsVersion: '1.2'
