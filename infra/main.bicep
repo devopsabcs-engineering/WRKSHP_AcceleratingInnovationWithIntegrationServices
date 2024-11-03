@@ -17,7 +17,7 @@ param publisherEmail string
 @minLength(1)
 param publisherName string
 
-resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource rg 'Microsoft.Resources/resourceGroups@2024-07-01' = {
   name: 'rg-${name}'
   location: location
   tags: {

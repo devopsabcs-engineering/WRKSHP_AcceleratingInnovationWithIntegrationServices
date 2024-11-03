@@ -10,7 +10,7 @@ param databaseName string = 'demo-database'
 @description('The name for the SQL API container')
 param containerName string = 'demo-container'
 
-resource account 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
+resource account 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
   name: toLower(accountName)
   location: location
   properties: {
@@ -19,7 +19,7 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
       defaultConsistencyLevel: 'Session'
     }
     publicNetworkAccess: 'Enabled'
-    capabilities:[
+    capabilities: [
       {
         name: 'EnableServerless'
       }
@@ -32,7 +32,7 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
   }
 }
 
-resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2022-05-15' = {
+resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-05-15' = {
   parent: account
   name: databaseName
   properties: {
@@ -42,7 +42,7 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2022-05-15
   }
 }
 
-resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
   parent: database
   name: containerName
   properties: {
@@ -70,6 +70,5 @@ resource container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/container
     }
   }
 }
-
 
 output cosmosDBAccountName string = account.name

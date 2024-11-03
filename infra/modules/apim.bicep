@@ -27,7 +27,7 @@ param skuCount int = 1
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
-resource apiManagementService 'Microsoft.ApiManagement/service@2021-12-01-preview' = {
+resource apiManagementService 'Microsoft.ApiManagement/service@2024-05-01' = {
   name: apimServiceName
   location: location
   sku: {
@@ -45,4 +45,3 @@ resource apiManagementService 'Microsoft.ApiManagement/service@2021-12-01-previe
 
 output apimServiceName string = apiManagementService.name
 output apimEndpoint string = apiManagementService.properties.gatewayUrl
-

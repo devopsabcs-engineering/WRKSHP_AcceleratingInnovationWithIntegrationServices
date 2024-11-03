@@ -4,11 +4,11 @@ param apimServiceName string
 @description('The Service Bus Namespace Endpoint')
 param sbEndpoint string
 
-resource apimInstance 'Microsoft.ApiManagement/service@2021-12-01-preview' existing = {
+resource apimInstance 'Microsoft.ApiManagement/service@2024-05-01' existing = {
   name: apimServiceName
 }
 
-resource api 'Microsoft.ApiManagement/service/apis@2021-12-01-preview' = {
+resource api 'Microsoft.ApiManagement/service/apis@2024-05-01' = {
   name: 'service-bus-operations'
   parent: apimInstance
   properties: {
@@ -22,10 +22,10 @@ resource api 'Microsoft.ApiManagement/service/apis@2021-12-01-preview' = {
   }
 }
 
-resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2021-12-01-preview' = {
+resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2024-05-01' = {
   name: 'send-message'
   parent: api
-  properties:{
+  properties: {
     displayName: 'Send Message'
     method: 'POST'
     urlTemplate: '/{queue_or_topic}'
@@ -38,8 +38,8 @@ resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2021-12-0
   }
 }
 
-resource operationPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2021-12-01-preview' = {
-  name:'policy'
+resource operationPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2024-05-01' = {
+  name: 'policy'
   parent: apiOperation
   properties: {
     format: 'rawxml'

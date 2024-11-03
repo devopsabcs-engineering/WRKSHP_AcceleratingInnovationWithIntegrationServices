@@ -14,7 +14,7 @@ resource functionAppInstance 'Microsoft.Web/sites@2021-03-01' existing = {
   name: functionAppName
 }
 
-resource cosmosDBInstance 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' existing = {
+resource cosmosDBInstance 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' existing = {
   name: cosmosAccountName
 }
 
@@ -23,7 +23,7 @@ var customAppSettings = {
   SBConnectionString__fullyQualifiedNamespace: sbHostName
 }
 
-var currentAppSettings = list('${functionAppInstance.id}/config/appsettings', '2021-02-01').properties
+var currentAppSettings = list('${functionAppInstance.id}/config/appsettings', '2023-12-01').properties
 
 module configurFunctionAppSettings './append-function-appsettings.bicep' = {
   name: '${functionAppName}-appendsettings'
@@ -34,8 +34,9 @@ module configurFunctionAppSettings './append-function-appsettings.bicep' = {
   }
 }
 
-resource srcControls 'Microsoft.Web/sites/sourcecontrols@2021-01-01' = {
-  name: '${functionAppInstance.name}/web'
+resource srcControls 'Microsoft.Web/sites/sourcecontrols@2023-12-01' = {
+  name: 'web'
+  parent: functionAppInstance
   properties: {
     repoUrl: repositoryUrl
     branch: branch

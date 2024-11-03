@@ -4,13 +4,13 @@ param functionAppName string
 @description('The Service Bus Namespace')
 param sbNameSpace string
 
-resource functionAppInstance 'Microsoft.Web/sites@2021-03-01' existing = {
+resource functionAppInstance 'Microsoft.Web/sites@2023-12-01' existing = {
   name: functionAppName
 }
 
 var functionId = functionAppInstance.identity.principalId
 
-resource sbInstance 'Microsoft.ServiceBus/namespaces@2021-11-01' existing = {
+resource sbInstance 'Microsoft.ServiceBus/namespaces@2023-01-01-preview' existing = {
   name: sbNameSpace
 }
 
@@ -20,7 +20,7 @@ resource sbDataReceiverRoleDefinition 'Microsoft.Authorization/roleDefinitions@2
   name: '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0'
 }
 
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: sbInstance
   name: guid(resourceGroup().id, functionAppInstance.id, sbDataReceiverRoleDefinition.id)
   properties: {

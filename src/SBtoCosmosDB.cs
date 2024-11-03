@@ -1,10 +1,8 @@
-using System;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
+using System;
 using System.Threading.Tasks;
 
 namespace SB_Integration_ComosDB
@@ -12,12 +10,12 @@ namespace SB_Integration_ComosDB
     public class SBtoCosmosDB
     {
         [FunctionName("SBtoCosmosDB")]
-        public async Task Run([ServiceBusTrigger("demo-queue", Connection = "SBConnectionString")]string myQueueItem,
+        public async Task Run([ServiceBusTrigger("demo-queue", Connection = "SBConnectionString")] string myQueueItem,
             [CosmosDB(
         databaseName: "demo-database",
-        collectionName: "demo-container",
+        containerName: "demo-container",
         CreateIfNotExists = true,
-        ConnectionStringSetting = "CosmosDbConnectionString")]IAsyncCollector<dynamic> documentsOut,
+            Connection = "CosmosDbConnectionString")]IAsyncCollector<dynamic> documentsOut,
             ILogger log)
         {
             if (IsValidJsonString(myQueueItem, log))
@@ -27,7 +25,7 @@ namespace SB_Integration_ComosDB
                 {
                     await documentsOut.AddAsync(myQueueItem);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     log.LogError($"Failed to process message: {myQueueItem}");
                     log.LogError($"The message failed with exception : {ex.Message} : Details: {ex.InnerException}");
@@ -51,7 +49,7 @@ namespace SB_Integration_ComosDB
                 var jsonModel = JObject.Parse(potentialJson);
                 return true;
             }
-            catch(JsonReaderException ex)
+            catch (JsonReaderException ex)
             {
                 log.LogError($"JSON validation failed. Exception : {ex.Message} : Details: {ex.InnerException}");
                 return false;
