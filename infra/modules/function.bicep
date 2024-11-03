@@ -9,6 +9,9 @@ param appName string = 'func-${uniqueString(resourceGroup().id)}'
 ])
 param storageAccountType string = 'Standard_LRS'
 
+@description('name of storage account')
+param storageAccountName string = 'stfunc${uniqueString(resourceGroup().id)}'
+
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
@@ -26,7 +29,7 @@ param runtime string = 'dotnet'
 var functionAppName = appName
 var hostingPlanName = appName
 var applicationInsightsName = appName
-var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+//var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
 var functionWorkerRuntime = runtime
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
@@ -85,6 +88,10 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
           value: '~4'
+        }
+        {
+          name: 'FUNCTIONS_INPROC_NET8_ENABLED'
+          value: '1'
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'

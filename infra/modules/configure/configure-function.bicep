@@ -7,8 +7,8 @@ param cosmosAccountName string
 @description('The Service Bus Namespace Host Name')
 param sbHostName string
 
-param repositoryUrl string = 'https://github.com/devopsabcs-engineering/WRKSHP_AcceleratingInnovationWithIntegrationServices.git'
-param branch string = 'main'
+//param repositoryUrl string = 'https://github.com/devopsabcs-engineering/WRKSHP_AcceleratingInnovationWithIntegrationServices.git'
+//param branch string = 'main'
 
 resource functionAppInstance 'Microsoft.Web/sites@2021-03-01' existing = {
   name: functionAppName
@@ -34,15 +34,15 @@ module configurFunctionAppSettings './append-function-appsettings.bicep' = {
   }
 }
 
-resource srcControls 'Microsoft.Web/sites/sourcecontrols@2023-12-01' = {
-  name: 'web'
-  parent: functionAppInstance
-  properties: {
-    repoUrl: repositoryUrl
-    branch: branch
-    isManualIntegration: true
-  }
-  dependsOn: [
-    configurFunctionAppSettings
-  ]
-}
+// resource srcControls 'Microsoft.Web/sites/sourcecontrols@2023-12-01' = {
+//   name: 'web'
+//   parent: functionAppInstance
+//   properties: {
+//     repoUrl: repositoryUrl
+//     branch: branch
+//     isManualIntegration: true
+//   }
+//   dependsOn: [
+//     configurFunctionAppSettings
+//   ]
+// }
