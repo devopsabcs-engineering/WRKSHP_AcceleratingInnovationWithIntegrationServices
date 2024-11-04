@@ -46,10 +46,10 @@ jobs:
       - name: Deploy Infrastructure
         shell: pwsh
         run: |
-          ./New-Deployment.ps1 -location ${{ env.LOCATION }} `
-            -nameSuffix ${{ env.NAME_SUFFIX }} `
-            -publisherEmail ${{ env.PUBLISHER_EMAIL }} `
-            -publisherName ${{ env.PUBLISHER_NAME }} `
+          ./New-Deployment.ps1 -location "${{ env.LOCATION }}" `
+            -nameSuffix "${{ env.NAME_SUFFIX }}" `
+            -publisherEmail "${{ env.PUBLISHER_EMAIL }}" `
+            -publisherName "${{ env.PUBLISHER_NAME }}" `
   build-and-deploy:
     runs-on: windows-latest
     needs: deploy-infra
