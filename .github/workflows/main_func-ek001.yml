@@ -12,12 +12,12 @@ on:
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: "src" # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: "8.0.x" # set this to the dotnet version to use
-  AZURE_FUNCTIONAPP_NAME: "func-ek002" # set this to your Azure Function App name
-  RESOURCE_GROUP: "rg-ek002" # set this to your Azure Resource Group name
-  APIM_GATEWAY_URL: "https://apim-ek002.azure-api.net" # set this to your Azure API Management Gateway URL
-  APIM_SERVICE_NAME: "apim-ek002" # set this to your Azure API Management Service Name
+  AZURE_FUNCTIONAPP_NAME: "func-ek003" # set this to your Azure Function App name
+  RESOURCE_GROUP: "rg-ek003" # set this to your Azure Resource Group name
+  APIM_GATEWAY_URL: "https://apim-ek003.azure-api.net" # set this to your Azure API Management Gateway URL
+  APIM_SERVICE_NAME: "apim-ek003" # set this to your Azure API Management Service Name
   LOCATION: "canadacentral" # set this to the Azure region where your resources will be deployed
-  NAME_SUFFIX: "ek002" # set this to a unique suffix for resource names
+  NAME_SUFFIX: "ek003" # set this to a unique suffix for resource names
   PUBLISHER_EMAIL: "admin@MngEnvMCAP675646.onmicrosoft.com"
   PUBLISHER_NAME: "Sys Admin"
 
