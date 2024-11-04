@@ -1,11 +1,29 @@
-# create azure credentials for the pipeline in github actions
+param (
+    [Parameter()]
+    [string]
+    $displayName = "GH__devopsabcs_engineering__WRKSHP_AcceleratingInnovationWithIntegrationServices", #"<your-service-principal-name>"
+    [Parameter()]
+    [string]
+    $githubRepo = "devopsabcs-engineering/WRKSHP_AcceleratingInnovationWithIntegrationServices", #"<your-github-username>/<your-repo-name>"
+    [Parameter()]
+    [string]
+    $subscriptionId = "64c3d212-40ed-4c6d-a825-6adfbdf25dad", #"<your-subscription-id>"
+    [Parameter()]
+    [string]
+    $tenantId = "aa93b9d9-037d-4f08-a26d-783cff0e2369", #"<your-tenant-id>"
+    [Parameter()]
+    [string]
+    $clientId = ""
+)
 
-# Variables
-$displayName = "GH__devopsabcs_engineering__WRKSHP_AcceleratingInnovationWithIntegrationServices" #"<your-service-principal-name>"
-$githubRepo = "devopsabcs-engineering/WRKSHP_AcceleratingInnovationWithIntegrationServices" #"<your-github-username>/<your-repo-name>"
-$subscriptionId = "64c3d212-40ed-4c6d-a825-6adfbdf25dad" #"<your-subscription-id>"
-$tenantId = "aa93b9d9-037d-4f08-a26d-783cff0e2369" #"<your-tenant-id>"
-$clientId = ""
+# echo parameters
+Write-Output "displayName: $displayName"
+Write-Output "githubRepo: $githubRepo"
+Write-Output "subscriptionId: $subscriptionId"
+Write-Output "tenantId: $tenantId"
+Write-Output "clientId: $clientId"
+
+# create azure credentials for the pipeline in github actions
 
 # Login to Azure
 #az login --service-principal -u "<your-service-principal-id>" -p "<your-service-principal-secret>" --tenant $tenantId
