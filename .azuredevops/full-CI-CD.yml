@@ -134,7 +134,7 @@ stages:
                     azureSubscription: "$(azureSubscription)"
                     scriptType: "pscore"
                     scriptLocation: "scriptPath"
-                    scriptPath: "deploy.ps1"
+                    scriptPath: "New-Deployment.ps1"
                     arguments: "-location $(location) -nameSuffix $(nameSuffix) -publisherEmail $(publisherEmail) -publisherName $(publisherName)"
   - stage: DeployApp
     displayName: Deploy App stage
@@ -174,5 +174,5 @@ stages:
               azureSubscription: "$(azureSubscription)"
               scriptType: "pscore"
               scriptLocation: "scriptPath"
-              scriptPath: "testDeployment.ps1"
+              scriptPath: "Validate-Deployment.ps1"
               arguments: -apimGatewayUrl $(apimGatewayUrl) -subscriptionId $(subscriptionId) -resourceGroup $(resourceGroup) -apimServiceName $(apimServiceName)
