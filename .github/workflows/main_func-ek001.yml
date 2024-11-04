@@ -16,6 +16,10 @@ env:
   RESOURCE_GROUP: "rg-ek002" # set this to your Azure Resource Group name
   APIM_GATEWAY_URL: "https://apim-ek002.azure-api.net" # set this to your Azure API Management Gateway URL
   APIM_SERVICE_NAME: "apim-ek002" # set this to your Azure API Management Service Name
+  LOCATION: "canadacentral" # set this to the Azure region where your resources will be deployed
+  NAME_SUFFIX: "ek002" # set this to a unique suffix for resource names
+  PUBLISHER_EMAIL: "admin@MngEnvMCAP675646.onmicrosoft.com"
+  PUBLISHER_NAME: "Sys Admin"
 
 # Permission can be added at job level or workflow level
 permissions:
@@ -23,12 +27,35 @@ permissions:
   contents: write # This is required to create/push the new git tag
 
 jobs:
-  build-and-deploy:
+  deploy-infra:
     runs-on: windows-latest
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: write # This is required to create/push the new git tag
-
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # run powershell core script Deploy-Infrastructure.ps1
+      - name: Deploy Infrastructure
+        shell: pwsh
+        run: |
+          ./New-Deployment.ps1 -location ${{ env.LOCATION }} `
+            -nameSuffix ${{ env.NAME_SUFFIX }} `
+            -publisherEmail ${{ env.PUBLISHER_EMAIL }} `
+            -publisherName ${{ env.PUBLISHER_NAME }} `
+  build-and-deploy:
+    runs-on: windows-latest
+    needs: deploy-infra
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: write # This is required to create/push the new git tag
     steps:
       - uses: actions/checkout@v4
         with:
