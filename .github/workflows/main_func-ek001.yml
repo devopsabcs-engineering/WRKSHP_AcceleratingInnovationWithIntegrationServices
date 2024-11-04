@@ -13,6 +13,9 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: "src" # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: "8.0.x" # set this to the dotnet version to use
   AZURE_FUNCTIONAPP_NAME: "func-ek002" # set this to your Azure Function App name
+  RESOURCE_GROUP: "rg-ek002" # set this to your Azure Resource Group name
+  APIM_GATEWAY_URL: "https://ek002-apim.azure-api.net" # set this to your Azure API Management Gateway URL
+  APIM_SERVICE_NAME: "apim-ek002" # set this to your Azure API Management Service Name
 
 # Permission can be added at job level or workflow level
 permissions:
@@ -54,21 +57,18 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-
       - name: "Resolve Project Dependencies Using Dotnet"
         shell: pwsh
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           dotnet build --configuration Release --output ./output -p:Version=${{ steps.gitversion.outputs.semVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
           popd
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
         id: fa
@@ -76,3 +76,11 @@ jobs:
           app-name: "${{ env.AZURE_FUNCTIONAPP_NAME }}"
           slot-name: "Production"
           package: "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output"
+      # run powershell core script Validate-Deployment.ps1
+      - name: Validate Deployment
+        shell: pwsh
+        run: |
+          ./Validate-Deployment.ps1 -apimGatewayUrl ${{ env.APIM_GATEWAY_URL }} `
+            -resourceGroup ${{ env.RESOURCE_GROUP }} `
+            -apimServiceName ${{ env.APIM_SERVICE_NAME }} `
+            -subscriptionId ${{ secrets.AZURE_SUBSCRIPTION_ID }}
