@@ -20,6 +20,9 @@ namespace SB_Integration_ComosDB
         {
             if (IsValidJsonString(myQueueItem, log))
             {
+                // get version from assembly
+                var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                log.LogInformation($"Version : {version}");
                 // Add a JSON document to the output container.
                 try
                 {

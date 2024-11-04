@@ -1,0 +1,178 @@
+# .NET Core Function App to Windows on Azure
+# Build a .NET Core function app and deploy it to Azure as a Windows function App.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  - main
+
+variables:
+  # Azure Resource Manager connection created during pipeline creation
+  - name: azureSubscription
+    value: "WRKSHP_IS_ME-MngEnvMCAP675646-emknafo-1 (64c3d212-40ed-4c6d-a825-6adfbdf25dad)-4734"
+  - name: publisherEmail
+    value: "admin@MngEnvMCAP675646.onmicrosoft.com"
+  - name: publisherName
+    value: "Sys Admin"
+  - name: location
+    value: canadacentral
+  - name: nameSuffix
+    value: ek002
+  - name: apimGatewayUrl
+    value: "https://apim-$(nameSuffix).azure-api.net"
+  - name: subscriptionId
+    value: "64c3d212-40ed-4c6d-a825-6adfbdf25dad"
+  - name: resourceGroup
+    value: "rg-$(nameSuffix)"
+  - name: apimServiceName
+    value: "apim-$(nameSuffix)"
+
+    # Function app name
+  - name: functionAppName
+    value: "func-$(nameSuffix)"
+
+    # Agent VM image name
+  - name: vmImageName
+    value: "windows-latest"
+
+    # Working Directory
+  - name: workingDirectory
+    value: "$(System.DefaultWorkingDirectory)/src"
+
+    # Build Configuration
+  - name: buildConfiguration
+    value: "Release"
+
+stages:
+  - stage: Build
+    displayName: Build stage
+    jobs:
+      - job: Set_tag_for_version
+        displayName: set version once
+        steps:
+          - checkout: self
+            persistCredentials: true
+            fetchDepth: 0
+          - task: gitversion/setup@3
+            enabled: true
+            displayName: "Install GitTools"
+            inputs:
+              versionSpec: "5.x"
+          - task: gitversion/execute@3
+            enabled: true
+            displayName: "Calculate SemVer"
+          - script: echo current version is $(GitVersion.SemVer)
+            displayName: "Display calculated version"
+          - task: CmdLine@2
+            enabled: true
+            displayName: Init git global config
+            inputs:
+              script: |
+                git config --global user.email $(Build.RequestedForEmail)
+                git config --global user.name $(Build.RequestedFor)
+          - task: CmdLine@2
+            enabled: true
+            displayName: Create Git tag for current version
+            inputs:
+              script: |
+                git tag -a $(GitVersion.SemVer) -m "Main version $(GitVersion.SemVer)"
+                git push origin $(GitVersion.SemVer)
+      - job: Build
+        dependsOn: Set_tag_for_version
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - checkout: self #REDUNDANT
+            persistCredentials: true
+            fetchDepth: 0
+          - task: gitversion/setup@3
+            enabled: true
+            displayName: "Install GitTools"
+            inputs:
+              versionSpec: "5.x"
+          - task: gitversion/execute@3
+            enabled: true
+            displayName: "Calculate SemVer"
+          - script: echo current version is $(GitVersion.SemVer)
+            displayName: "Display calculated version"
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: "build"
+              projects: |
+                $(workingDirectory)/*.csproj
+              arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration $(buildConfiguration) -p:Version=$(GitVersion.SemVer) -p:FileVersion=$(GitVersion.AssemblySemFileVer) -p:AssemblyVersion=$(GitVersion.AssemblySemVer)
+          - task: ArchiveFiles@2
+            displayName: "Archive files"
+            inputs:
+              rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+              replaceExistingArchive: true
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            artifact: drop
+  - stage: DeployInfrastructure
+    displayName: Deploy Infra stage
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment: DeployInfra
+        displayName: Deploy Infra
+        environment: "WRKSHP_IS_infra_development_$(nameSuffix)"
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  displayName: "deploy infra"
+                  inputs:
+                    azureSubscription: "$(azureSubscription)"
+                    scriptType: "pscore"
+                    scriptLocation: "scriptPath"
+                    scriptPath: "deploy.ps1"
+                    arguments: "-location $(location) -nameSuffix $(nameSuffix) -publisherEmail $(publisherEmail) -publisherName $(publisherName)"
+  - stage: DeployApp
+    displayName: Deploy App stage
+    dependsOn: DeployInfrastructure
+    condition: succeeded()
+    jobs:
+      - deployment: DeployApp
+        displayName: Deploy App
+        environment: "WRKSHP_fn_app_development_$(nameSuffix)"
+        pool:
+          vmImage: $(vmImageName)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureFunctionApp@2
+                  displayName: "Azure functions app deploy"
+                  inputs:
+                    connectedServiceNameARM: "$(azureSubscription)"
+                    appType: functionApp
+                    appName: $(functionAppName)
+                    package: "$(Pipeline.Workspace)/drop/$(Build.BuildId).zip"
+  - stage: TestApp
+    displayName: Test App stage
+    dependsOn: DeployApp
+    condition: succeeded()
+    jobs:
+      - job: TestApp
+        displayName: Test App
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - checkout: self
+          - task: AzureCLI@2
+            displayName: "test app deployment"
+            inputs:
+              azureSubscription: "$(azureSubscription)"
+              scriptType: "pscore"
+              scriptLocation: "scriptPath"
+              scriptPath: "testDeployment.ps1"
+              arguments: -apimGatewayUrl $(apimGatewayUrl) -subscriptionId $(subscriptionId) -resourceGroup $(resourceGroup) -apimServiceName $(apimServiceName)
