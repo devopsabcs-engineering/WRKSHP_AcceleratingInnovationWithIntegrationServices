@@ -14,7 +14,7 @@ env:
   DOTNET_VERSION: "8.0.x" # set this to the dotnet version to use
   AZURE_FUNCTIONAPP_NAME: "func-ek002" # set this to your Azure Function App name
   RESOURCE_GROUP: "rg-ek002" # set this to your Azure Resource Group name
-  APIM_GATEWAY_URL: "https://ek002-apim.azure-api.net" # set this to your Azure API Management Gateway URL
+  APIM_GATEWAY_URL: "https://apim-ek002.azure-api.net" # set this to your Azure API Management Gateway URL
   APIM_SERVICE_NAME: "apim-ek002" # set this to your Azure API Management Service Name
 
 # Permission can be added at job level or workflow level
