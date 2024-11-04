@@ -55,7 +55,11 @@ Write-Output "Sending data to APIM Gateway"
 Write-Output "CosmosDB data will show only one record with the current date: $date"
 Write-Output $body
 
-Invoke-WebRequest -Uri "$apimGatewayUrl/sb-operations/demo-queue" `
+$uri = "$apimGatewayUrl/sb-operations/demo-queue"
+
+Write-Output "URI: $uri"
+
+Invoke-WebRequest -Uri $uri `
     -Headers $headers `
     -Method 'POST' `
     -Body $body
