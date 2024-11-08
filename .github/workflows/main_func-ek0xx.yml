@@ -85,6 +85,8 @@ jobs:
           echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
       - name: Create tag
         uses: actions/github-script@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT_TOKEN }}
         with:
           script: |
             github.git.createRef({
