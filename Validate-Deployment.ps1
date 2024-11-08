@@ -1,19 +1,23 @@
 param (
     [Parameter()]
     [string]
-    $apimGatewayUrl = "https://apim-ek001.azure-api.net",
+    $instanceNumber = "ek002",
     [Parameter()]
     [string]
-    $resourceGroup = "rg-ek001",
+    $apimGatewayUrl = "https://apim-$instanceNumber.azure-api.net",
     [Parameter()]
     [string]
-    $apimServiceName = "apim-ek001",
+    $resourceGroup = "rg-$instanceNumber",
     [Parameter()]
     [string]
-    $subscriptionId = "64c3d212-40ed-4c6d-a825-6adfbdf25dad"
+    $apimServiceName = "apim-$instanceNumber",
+    [Parameter()]
+    [string]
+    $subscriptionId = "64c3d212-40ed-4c6d-a825-6adfbdf25dad" # CHANGE ME
 )
 
 # echo parameters
+Write-Output "instanceNumber: $instanceNumber"
 Write-Output "apimGatewayUrl: $apimGatewayUrl"
 Write-Output "resourceGroup: $resourceGroup"
 Write-Output "apimServiceName: $apimServiceName"
